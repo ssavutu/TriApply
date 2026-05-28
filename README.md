@@ -1,0 +1,3 @@
+# TriApply
+
+This project is a minimal ATS solution for The Triangle. It does not have many of the basic features that come with other applicant tracking systems, that is by design. The purpose of this project is to be a cleaner, self-hosted, alternative to The Triangle's current application pipeline, consisting of a Google Form and Slack integrations. It provides an easy to navigate form with autosaving and Google Authentication, a dashboard to review and message candidates, and an editor to change the form options. All review is done by hand -- without AI, as is the preference of The Triangle staff.
