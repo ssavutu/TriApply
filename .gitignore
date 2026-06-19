@@ -1,0 +1,7 @@
+.clj-kondo/.cache/
+.clj-kondo/imports/
+.lsp/
+.lein-repl-history
+.lein-failures
+target/
+*.un~

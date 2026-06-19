@@ -1,3 +1,24 @@
 # TriApply
 
-This project is a minimal ATS solution for The Triangle. It does not have many of the basic features that come with other applicant tracking systems, that is by design. The purpose of this project is to be a cleaner, self-hosted, alternative to The Triangle's current application pipeline, consisting of a Google Form and Slack integrations. It provides an easy to navigate form with autosaving and Google Authentication, a dashboard to review and message candidates, and an editor to change the form options. All review is done by hand -- without AI, as is the preference of The Triangle staff.
+TriApply is a minimal ATS solution for The Triangle. It is intentionally smaller
+than general-purpose applicant tracking systems, providing a cleaner,
+self-hosted alternative to the current Google Form and Slack-based application
+pipeline.
+
+The app is intended to provide an applicant form, reviewer dashboard, candidate
+messaging, and editable form options. All review is done by hand, without AI, as
+preferred by The Triangle staff.
+
+## Development
+
+Run tests:
+
+```sh
+lein test
+```
+
+Start a REPL:
+
+```sh
+lein repl
+```
