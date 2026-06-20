@@ -1,0 +1,106 @@
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+(require '[triapply.web :as web] :reload)
+
+; Results are configured to appear in the Output Terminal.
+; To reveal the output, use the command:
+; > Calva: Show/Open the result output destination
+clj꞉triapply.core꞉> (def server (web/start-server))
+(triapply.views.layout/page)
+; Execution error (ArityException) at triapply.core/eval13954 (repl.calva-repl:15).
+; Wrong number of args (0) passed to: triapply.views.layout/page
+clj꞉triapply.core꞉> 
+(web/handler nil)
+clj꞉triapply.core꞉> 
+(.stop server)
+clj꞉triapply.core꞉> 
+(def server (web/start-server))
+clj꞉triapply.core꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> (require '[triapply.web :as web] :reload)
+(web/start-server)
+clj꞉triapply.core꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+(stop)
+; Syntax error compiling at (dev/triapply/shortcuts.clj:23:3).
+; Unable to resolve symbol: stop in this context
+clj꞉triapply.shortcuts꞉> 
+restart
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: restart in this context
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+start-alt
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start-alt in this context
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+stop
+clj꞉triapply.shortcuts꞉> 
+restart
+clj꞉triapply.shortcuts꞉> 
+stop
+clj꞉triapply.shortcuts꞉> 
+start
+clj꞉triapply.shortcuts꞉> 
+(when-let [requires (resolve 'clojure.main/repl-requires)] (clojure.core/apply clojure.core/require @requires))
+clj꞉triapply.core꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+:as
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> (:require [triapply.web :as web])
+
+; Syntax error (ClassNotFoundException) compiling at (.calva/repl.calva-repl:74:26).
+; triapply.web
+clj꞉triapply.shortcuts꞉> (require '[triapply.web :as web] :reload)
+
+
+; Results are configured to appear in the Output Terminal.
+; To reveal the output, use the command:
+; > Calva: Show/Open the result output destination
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> 
+start
+; Syntax error compiling at (dev/triapply/shortcuts.clj:0:0).
+; Unable to resolve symbol: start in this context
+clj꞉triapply.shortcuts꞉> (require '[triapply.shortcuts :refer [start stop restart]] :reload)
+start
+clj꞉triapply.shortcuts꞉> 
+web/handler
+clj꞉triapply.shortcuts꞉> 
+stop
+clj꞉triapply.shortcuts꞉> 
+start
+clj꞉triapply.shortcuts꞉> 
+(start-alt)
+clj꞉triapply.shortcuts꞉> 

@@ -6,9 +6,11 @@
   :dependencies [[org.clojure/clojure "1.12.2"]
                  [ring/ring-core "1.15.2"]
                  [ring/ring-jetty-adapter "1.15.2"]
+                 [ring/ring-devel "1.15.2"]
                  [metosin/reitit "0.9.1"]
                  [hiccup "2.0.0-RC4"]]
   :main ^:skip-aot triapply.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
+  :profiles {:dev {:source-paths ["dev"]}
+             :uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
