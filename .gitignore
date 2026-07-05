@@ -4,4 +4,7 @@
 .lein-repl-history
 .lein-failures
 target/
+resources/public/js/
+.shadow-cljs/
+node_modules/
 *.un~

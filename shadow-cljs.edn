@@ -1,0 +1,8 @@
+{:source-paths ["src-cljs"]
+
+ :builds
+ {:app
+  {:target :browser
+   :output-dir "resources/public/js"
+   :asset-path "/js"
+   :modules {:apply {:init-fn triapply.apply/init}}}}}

@@ -11,6 +11,24 @@ preferred by The Triangle staff.
 
 ## Development
 
+Install the ClojureScript build dependencies:
+
+```sh
+npm install
+```
+
+Compile the browser code and rebuild it when a ClojureScript source file changes:
+
+```sh
+npm run cljs:watch
+```
+
+Create an optimized browser build:
+
+```sh
+npm run cljs:release
+```
+
 Run tests:
 
 ```sh

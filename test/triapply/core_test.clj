@@ -9,4 +9,5 @@
     (let [response (web/handler {})]
       (is (= 200 (:status response)))
       (is (= "text/html" (get-in response [:headers "Content-Type"])))
-      (is (string/includes? (:body response) "Apply to The Triangle")))))
+      (is (string/includes? (:body response) "Apply to The Triangle"))
+      (is (string/includes? (:body response) "src=\"/js/apply.js\"")))))

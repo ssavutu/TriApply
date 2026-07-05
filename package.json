@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "cljs:watch": "shadow-cljs watch app",
+    "cljs:release": "shadow-cljs release app"
+  },
+  "devDependencies": {
+    "shadow-cljs": "3.4.11"
+  }
+}

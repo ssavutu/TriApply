@@ -1,21 +1,8 @@
 (ns triapply.views.apply
   (:require
-   [hiccup2.core :as h]
+   [clojure.string :as str]
+   [triapply.form :as form]
    [triapply.views.layout :as layout]))
-
-(def section-options
-  [["news-writing" "News Writing"]
-   ["opinion-writing" "Opinion Writing"]
-   ["arts-entertainment" "Arts & Entertainment Writing"]
-   ["sports-writing" "Sports Writing"]
-   ["comics-puzzles" "Comics Writing and Puzzles"]
-   ["photography" "Photography"]
-   ["graphic-design" "Graphic Design"]
-   ["copy-editing" "Copy Editing"]
-   ["distribution" "Distribution of Newspapers"]
-   ["business-marketing" "Business and Marketing"]
-   ["it-team" "IT Team"]
-   ["video-creation" "Video Creation"]])
 
 (def google-field-class
   "mt-3 block w-full border-0 border-b border-triangleGray bg-transparent px-0 py-2 text-base text-triangleDark placeholder:text-triangleDark/40 focus:border-triangleBlue focus:outline-none focus:ring-0")
@@ -39,7 +26,7 @@
   "inline-block font-roboto-slab text-2xl font-extrabold text-triangleDark border-b border-blue-600 pb-2")
 
 (defn section-checkbox
-  [[value label]]
+  [{:keys [value label]}]
   [:label {:class "flex items-center gap-3 text-base text-triangleDark"}
    [:input {:class "section-interest triangle-checkbox disabled:opacity-40"
             :type "checkbox"
@@ -47,7 +34,51 @@
             :value value}]
    label])
 
-(defn apply-page []
+(defn supplemental-field
+  "Renders a label + control for one conditional input. `:data-conditional-required`
+  is a presence flag the client engine reads to toggle `required` and clear the
+  value when the owning section is hidden."
+  [{nm :name :keys [type id label required? multiple accept rows placeholder]}]
+  [[:label {:class "block text-base font-medium text-triangleDark" :for id}
+    label
+    (when required? [:span {:class "ml-1 text-red-600"} "*"])]
+   (case type
+     :textarea
+     [:textarea {:class (str google-field-class " min-h-28 resize-y")
+                 :id id
+                 :name nm
+                 :rows (or rows 4)
+                 :data-conditional-required required?}]
+     :file
+     [:input {:class file-field-class
+              :type "file"
+              :id id
+              :name nm
+              :accept accept
+              :multiple multiple
+              :data-conditional-required required?}]
+     ;; text, url, …
+     [:input {:class google-field-class
+              :type (name type)
+              :id id
+              :name nm
+              :placeholder placeholder
+              :data-conditional-required required?}])])
+
+(defn supplemental-section
+  "Renders one conditional card. `:data-triggers` carries the section values that
+  reveal it, which the client engine splits on whitespace."
+  [{:keys [id title intro fields triggers]}]
+  (into
+   (cond-> [:section {:class conditional-card-class
+                      :data-supplemental id
+                      :data-triggers (str/join " " (sort triggers))}]
+     title (conj [:h2 {:class card-heading-class} title]))
+   (concat intro (mapcat supplemental-field fields))))
+
+(defn apply-page
+  ([] (apply-page form/default-form))
+  ([{:keys [section-limit sections supplementals]}]
   (layout/page
    "Apply to The Triangle"
    [:header {:class "mx-auto mt-10 max-w-2xl border-b-2 border-black pb-5 text-center"}
@@ -261,11 +292,12 @@
       [:p {:class "mt-2 text-sm text-triangleDark/60"}
        "Choose up to 5 areas you are most interested in. These choices are non-binding."]
       [:p {:id "section-count"
+           :data-section-limit section-limit
            :class "mt-4 text-sm font-medium text-triangleDark/80"}
-       "0 of 5 selected"]
+       (str "0 of " section-limit " selected")]
       (into
        [:div {:class "mt-5 grid gap-4 sm:grid-cols-2"}]
-       (map section-checkbox section-options))]]
+       (map section-checkbox sections))]]
 
     [:div {:class stacked-card-class}
      [:div
@@ -285,174 +317,6 @@
      [:p {:class "mt-2 text-sm text-triangleDark/60"}
       "Select sections above to see any required supplemental materials."]]
 
-    [:section {:class conditional-card-class
-               :data-supplemental "writing"}
-     [:h2 {:class card-heading-class} "Writing sample"]
-     [:p {:class "text-sm leading-6 text-triangleDark/80"}
-      "Please complete one of the writing prompts below. Answers to the prompts should be submitted in a separate PDF and be at least one page in length. If you are applying to multiple writing sections, write only one prompt for your top choice."]
-     [:ol {:class "list-decimal space-y-2 pl-5 text-sm leading-6 text-triangleDark/80"}
-      [:li "Write a news story about a current event that happened in Philadelphia."]
-      [:li "Write a review. It could be a movie review, food review, TV review, or a review of anything that sparks your interest."]
-      [:li "Write or supply something you have already written that pertains to news, opinion, arts and entertainment, or sports."]]
-     [:br]
-     [:p {:class "text-sm leading-6 text-triangleDark/80"}
-      " If you chose or are interested in comics/humor writing, write something funny. It does not have to be an article. It could be a top 10 list, horoscope, an actual comic, or something we haven't thought of."]
-     [:label {:class "block text-base font-medium text-triangleDark" :for "writing-samples"}
-      "Upload writing sample PDF"
-      [:span {:class "ml-1 text-red-600"} "*"]]
-     [:input {:class file-field-class
-              :type "file"
-              :id "writing-samples"
-              :name "writing-samples"
-              :accept "application/pdf"
-              :multiple true
-              :data-conditional-required true}]]
+    (map supplemental-section supplementals)
 
-    [:section {:class conditional-card-class
-               :data-supplemental "resume"}
-     [:h2 {:class card-heading-class} "Resume"]
-     [:p {:class "text-sm leading-6 text-triangleDark/80"}
-      "Please attach your resume as a PDF."]
-     [:label {:class "block text-base font-medium text-triangleDark" :for "resume"}
-      "Upload resume PDF"
-      [:span {:class "ml-1 text-red-600"} "*"]]
-     [:input {:class file-field-class
-              :type "file"
-              :id "resume"
-              :name "resume"
-              :accept "application/pdf"
-              :data-conditional-required true}]]
-
-    [:section {:class conditional-card-class
-               :data-supplemental "portfolio"}
-     [:h2 {:class card-heading-class} "Portfolio samples"]
-     [:p {:class "text-sm leading-6 text-triangleDark/80"}
-      "If you selected Photography, Graphic Design, or Video Creation, please provide a few samples of your work as a portfolio in PDF form, or add a link if you have a website instead. The pieces you choose should represent your abilities as an artist."]
-     [:label {:class "block text-base font-medium text-triangleDark" :for "portfolio-files"}
-      "Upload portfolio PDFs"]
-     [:input {:class file-field-class
-              :type "file"
-              :id "portfolio-files"
-              :name "portfolio-files"
-              :accept "application/pdf"
-              :multiple true
-              :data-conditional-required true}]
-     [:label {:class "block text-base font-medium text-triangleDark" :for "portfolio-link"}
-      "Portfolio site"
-      [:span {:class "ml-1 text-red-600"} "*"]]
-     [:input {:class google-field-class
-              :type "url"
-              :id "portfolio-link"
-              :name "portfolio-link"
-              :placeholder "https://mycoolphotos.net"
-              :data-conditional-required true}]]
-
-    [:section {:class conditional-card-class
-               :data-supplemental "graphic-design"}
-     [:label {:class "block text-base font-medium text-triangleDark" :for "graphic-design-experience"}
-      "If you selected Graphic Design, what programs do you know and what experience do you have?"
-      [:span {:class "ml-1 text-red-600"} "*"]]
-     [:textarea {:class (str google-field-class " min-h-28 resize-y")
-                 :id "graphic-design-experience"
-                 :name "graphic-design-experience"
-                 :rows 4
-                 :data-conditional-required true}]]
-
-    [:section {:class conditional-card-class
-               :data-supplemental "field-experience"}
-     [:label {:class "block text-base font-medium text-triangleDark" :for "field-experience"}
-      "If you selected IT Team or Business and Marketing, do you have any experience in this field?"
-      [:span {:class "ml-1 text-red-600"} "*"]]
-     [:textarea {:class (str google-field-class " min-h-28 resize-y")
-                 :id "field-experience"
-                 :name "field-experience"
-                 :rows 4
-                 :data-conditional-required true}]]
-
-    [:script
-     (h/raw
-      "document.addEventListener('DOMContentLoaded', () => {
-       const sectionLimit = 5;
-       const sectionBoxes = Array.from(document.querySelectorAll('.section-interest'));
-       const sectionCount = document.getElementById('section-count');
-       const supplementalEmpty = document.querySelector('.supplemental-empty');
-       const supplementalSections = Array.from(document.querySelectorAll('.supplemental-section'));
-
-       const writingSections = ['news-writing', 'opinion-writing', 'arts-entertainment', 'sports-writing', 'comics-puzzles'];
-       const portfolioSections = ['photography', 'graphic-design', 'video-creation'];
-       const resumeSections = ['copy-editing', 'business-marketing', 'it-team'];
-       
-       function selectedValues() {
-           return sectionBoxes.filter((box) => box.checked).map((box) => box.value);
-       }
-
-       function hasAny(selected, values) {
-           return values.some((value) => selected.includes(value));
-       }
-
-       function setSupplementalVisibility(name, show) {
-           const section = document.querySelector(`[data-supplemental='${name}']`);
-           if (!section) return;
-
-           if (show) {
-               section.classList.remove('hidden');
-           } else {
-               section.classList.add('hidden');
-           }
-
-           section.querySelectorAll('[data-conditional-required]').forEach((field) => {
-               field.required = show;
-               if (!show) field.value = '';
-           });
-       }
-
-       function updateSupplementalSections() {
-           const selected = selectedValues();
-
-           if (hasAny(selected, writingSections)) {
-               setSupplementalVisibility('writing', true);
-           } else {
-               setSupplementalVisibility('writing', false);
-           }
-
-           if (hasAny(selected, portfolioSections)) {
-               setSupplementalVisibility('portfolio', true);
-           } else {
-               setSupplementalVisibility('portfolio', false);
-           }
-
-           if (hasAny(selected, resumeSections)) {
-               setSupplementalVisibility('resume', true);
-           } else {
-               setSupplementalVisibility('resume', false);
-           }
-
-           if (selected.includes('graphic-design')) {
-               setSupplementalVisibility('graphic-design', true);
-           } else {
-               setSupplementalVisibility('graphic-design', false);
-           }
-
-           if (selected.includes('it-team') || selected.includes('business-marketing')) {
-               setSupplementalVisibility('field-experience', true);
-           } else {
-               setSupplementalVisibility('field-experience', false);
-           }
-
-           const anyVisible = supplementalSections.some((section) => !section.classList.contains('hidden'));
-           supplementalEmpty.classList.toggle('hidden', anyVisible);
-       }
-
-       function updateSectionLimit() {
-           const selected = sectionBoxes.filter((box) => box.checked).length;
-           sectionCount.textContent = `${selected} of ${sectionLimit} selected`;
-           sectionBoxes[0].setCustomValidity(selected === 0 ? 'Pick at least one section.' : '');
-           sectionBoxes.forEach((box) => {
-               box.disabled = !box.checked && selected >= sectionLimit;
-           });
-           updateSupplementalSections();
-       }
-       
-       sectionBoxes.forEach((box) => box.addEventListener('change', updateSectionLimit));
-       updateSectionLimit();
-       });")]]))
+    [:script {:src "/js/apply.js" :defer true}]])))
