@@ -1,14 +1,4 @@
-(ns triapply.form
-  "Data-driven definition of the application form.
-
-  This is the single source of truth the renderer and the client-side
-  engine both derive from. Today it's a literal; a future editor can
-  swap `default-form` for config read from EDN/a database without
-  touching the rendering code.
-
-  Prose lives as hiccup vectors under `:intro`; interactive inputs are
-  structured `:fields` maps so the client engine can toggle their
-  `required`/visibility generically.")
+(ns triapply.form)
 
 (def default-form
   {:section-limit 5
