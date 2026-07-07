@@ -1,0 +1,257 @@
+;; TriApply application form DSL, version 1.
+;; This file owns copy, questions, choices, and validation messages.
+;; HTML structure and styling remain in triapply-portal.views.application-form.
+
+{:version 1
+
+ :page
+ {:browser-title "Apply to The Triangle"
+  :masthead {:src "/triangle-masthead.svg" :alt "The Triangle"}
+  :application-title "Triangle Spring 2026 Application"}
+
+ :introduction
+ [{:type :paragraph
+   :text "This application cycle will be from April 5th to April 19th. Please apply at your earliest convenience possible in the Spring Term, and we will determine the result of your application as soon as possible."}
+  {:type :heading :text "Application Process:"}
+  {:type :ordered-list
+   :items ["Submit your application materials"
+           "Answer some short application questions"
+           "Supply supplemental application materials if required (depends on position)"
+           "Acceptance email with onboarding information or rejection email will be sent within two weeks of application"]}
+  {:type :paragraph
+   :variant :note
+   :text "Note: If you have any issues or questions, contact the Staff Manager as soon as possible at apply@thetriangle.org."}
+  {:type :heading :text "Expectations of The Triangle:"}
+  {:type :paragraph
+   :text "Actively contribute to The Triangle each term. Each section will have its own expectations, explained by your editor once accepted. Regardless of your assigned section, you may contribute to other sections that interest you."}
+  {:type :heading :text "A few examples of current expectations for members include:"}
+  {:type :unordered-list
+   :items ["Writers: Writing and submitting an article that is published in The Triangle"
+           "Photographers: Attending one event as the photographer, taking at least one photo that is used in a Triangle publication, and recording video content"
+           "Copy Editors: Copy-editing three articles"
+           "Graphic Design: Illustrating or helping illustrate one comic or graphic, or creating graphics for Instagram"
+           "Video Editors: Assisting in all aspects of video creation"
+           "Helping with one print distribution cycle"
+           "Helping maintain a professional office environment and improve the newspaper"
+           "Upholding journalistic standards and reporting only the truth"
+           "Abiding by the Bylaws set forth in The Triangle constitution"]}
+  {:type :heading :text "General Body Meetings"}
+  {:type :paragraph
+   :text "The Triangle holds GBMs every Wednesday throughout the term at 6:30 p.m. at The Triangle Office, located at Suite 050 in the basement of Creese Student Center. Members are expected to attend. If you have a conflict such as class, sports practice, or rehearsal, inform your section editor before the meeting."}]
+
+ :applicant
+ {:title "Tell us about yourself"
+  :fields
+  [{:type :text
+    :id "name"
+    :name "name"
+    :label "Name"
+    :placeholder "J. Doe"
+    :autocomplete "name"
+    :required? true
+    :error "Enter your name."}
+   {:type :text
+    :id "pronouns"
+    :name "pronouns"
+    :label "Pronouns"
+    :placeholder "They/Them"}
+   {:type :date
+    :id "birthdate"
+    :name "birthdate"
+    :label "Birthdate"
+    :autocomplete "bday"
+    :required? true
+    :error "Enter your birthdate."
+    :validation {:rule :past-date
+                 :message "Enter a valid birthdate that is not in the future."}}
+   {:type :tel
+    :id "phone-number"
+    :name "phone-number"
+    :label "Phone Number"
+    :placeholder "8675309"
+    :autocomplete "tel"
+    :required? true
+    :error "Enter your phone number."}
+   {:type :email
+    :id "email"
+    :name "email"
+    :label "Drexel Email"
+    :placeholder "abc123@drexel.edu"
+    :autocomplete "email"
+    :required? true
+    :error "Enter your Drexel email address."
+    :validation {:rule :drexel-email
+                 :message "Enter a valid @drexel.edu email address."}}
+   {:type :text
+    :id "major"
+    :name "major"
+    :label "Major"
+    :placeholder "Journalism"
+    :required? true
+    :error "Enter your major."}
+   {:type :text
+    :id "minor-con"
+    :name "minor-con"
+    :label "Minor/Concentration"
+    :placeholder "Creative Writing"}
+   {:type :text
+    :id "grad-year"
+    :name "grad-year"
+    :label "Year of Graduation"
+    :placeholder "2029"
+    :required? true
+    :error "Enter your graduation year."
+    :validation {:rule :four-digit-year
+                 :message "Enter a four-digit graduation year."}}
+   {:type :text
+    :id "coop-cycle"
+    :name "coop-cycle"
+    :label "Co-op Cycle"
+    :placeholder "Fall/Winter"
+    :required? true
+    :error "Enter your co-op cycle."}
+   {:type :text
+    :id "heard-from"
+    :name "heard-from"
+    :label "How did you learn about The Triangle?"
+    :placeholder "I saw it in a dream"
+    :width :full
+    :required? true
+    :error "Tell us how you learned about The Triangle."}
+   {:type :text
+    :id "other-clubs"
+    :name "other-clubs"
+    :label "What other clubs or organizations do you plan to be in?"
+    :placeholder "WKDU, TechServ"
+    :width :full
+    :required? true
+    :error "List your other clubs or enter none."}
+   {:type :radio-group
+    :name "prev-experience"
+    :label "Do you have any experience with newspaper production or journalism?"
+    :width :full
+    :required? true
+    :error "Choose a previous-experience option."
+    :options
+    [{:id "prev-experience-yes" :value "yes" :label "Yes"}
+     {:id "prev-experience-no" :value "no" :label "No"}
+     {:id "prev-experience-other"
+      :value "other"
+      :label "Other:"
+      :detail-field {:type :text
+                     :id "prev-experience-other-text"
+                     :name "prev-experience-other"
+                     :aria-label "Other previous experience"
+                     :placeholder "I was an investigative journalist for The Onion"
+                     :required? true
+                     :error "Describe your previous experience."}}]}]}
+
+ :section-limit 5
+ :section-picker
+ {:title "Pick your top %d sections"
+  :help "Choose up to %d areas you are most interested in. These choices are non-binding."
+  :required-error "Pick at least one section."
+  :limit-error "Pick no more than %d sections."
+  :invalid-error "One or more selected sections are invalid."}
+
+ :sections
+ [{:value "news-writing" :label "News Writing"}
+  {:value "opinion-writing" :label "Opinion Writing"}
+  {:value "arts-entertainment" :label "Arts & Entertainment Writing"}
+  {:value "sports-writing" :label "Sports Writing"}
+  {:value "comics-puzzles" :label "Comics Writing and Puzzles"}
+  {:value "photography" :label "Photography"}
+  {:value "graphic-design" :label "Graphic Design"}
+  {:value "copy-editing" :label "Copy Editing"}
+  {:value "distribution" :label "Distribution of Newspapers"}
+  {:value "business-marketing" :label "Business and Marketing"}
+  {:value "it-team" :label "IT Team"}
+  {:value "video-creation" :label "Video Creation"}]
+
+ :preference-field
+ {:type :text
+  :id "top-two"
+  :name "top-two"
+  :label "For maximum clarity, please write out your top-two preferred sections you wish to join."
+  :placeholder "In order of preference, I wish to join News Writing and Opinion Writing"
+  :required? true
+  :error "Enter your top two preferred sections."}
+
+ :supplemental-empty
+ {:title "Supplemental materials"
+  :help "Select sections above to see any required supplemental materials."}
+
+ :supplementals
+ [{:id "writing"
+   :triggers #{"news-writing" "opinion-writing" "arts-entertainment" "sports-writing" "comics-puzzles"}
+   :title "Writing sample"
+   :content
+   [{:type :paragraph
+     :text "Complete one writing prompt below. Submit the answer as a separate PDF at least one page long. If you are applying to multiple writing sections, answer only the prompt for your top choice."}
+    {:type :ordered-list
+     :items ["Write a news story about a current event that happened in Philadelphia."
+             "Write a review. It could cover a movie, food, television, or anything else that interests you."
+             "Supply something you have already written that pertains to news, opinion, arts and entertainment, or sports."]}
+    {:type :paragraph
+     :text "If you selected comics or humor writing, submit something funny. It may be an article, top-ten list, horoscope, comic, or another format."}]
+   :fields [{:type :file
+             :id "writing-samples"
+             :name "writing-samples"
+             :label "Upload writing sample PDF"
+             :required? true
+             :error "Upload a writing sample PDF."
+             :multiple true
+             :accept "application/pdf"}]}
+
+  {:id "resume"
+   :triggers #{"copy-editing" "business-marketing" "it-team"}
+   :title "Resume"
+   :content [{:type :paragraph :text "Attach your resume as a PDF."}]
+   :fields [{:type :file
+             :id "resume"
+             :name "resume"
+             :label "Upload resume PDF"
+             :required? true
+             :error "Upload a resume PDF."
+             :accept "application/pdf"}]}
+
+  {:id "portfolio"
+   :triggers #{"photography" "graphic-design" "video-creation"}
+   :require-any #{"portfolio-files" "portfolio-link"}
+   :require-any-error "Upload at least one portfolio PDF or provide a portfolio link."
+   :title "Portfolio samples"
+   :content [{:type :paragraph
+              :text "Provide samples of your work as portfolio PDFs or a link to your portfolio website. Choose work that represents your abilities as an artist."}]
+   :fields [{:type :file
+             :id "portfolio-files"
+             :name "portfolio-files"
+             :label "Upload portfolio PDFs"
+             :multiple true
+             :accept "application/pdf"}
+            {:type :url
+             :id "portfolio-link"
+             :name "portfolio-link"
+             :label "Portfolio site"
+             :placeholder "https://mycoolphotos.net"}]}
+
+  {:id "graphic-design"
+   :triggers #{"graphic-design"}
+   :fields [{:type :textarea
+             :id "graphic-design-experience"
+             :name "graphic-design-experience"
+             :label "What programs do you know, and what graphic-design experience do you have?"
+             :required? true
+             :error "Describe your graphic-design experience."
+             :rows 4}]}
+
+  {:id "field-experience"
+   :triggers #{"it-team" "business-marketing"}
+   :fields [{:type :textarea
+             :id "field-experience"
+             :name "field-experience"
+             :label "Describe any experience you have in IT, business, or marketing."
+             :required? true
+             :error "Describe your relevant field experience."
+             :rows 4}]}]
+
+ :submit {:label "Submit application"}}

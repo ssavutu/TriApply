@@ -5,6 +5,7 @@
 .lein-failures
 target/
 resources/public/js/
+resources/public/css/
 .shadow-cljs/
 node_modules/
 *.un~

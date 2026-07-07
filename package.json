@@ -1,10 +1,17 @@
 {
+  "name": "triapply-portal",
   "private": true,
   "scripts": {
     "cljs:watch": "shadow-cljs watch app",
-    "cljs:release": "shadow-cljs release app"
+    "cljs:release": "shadow-cljs release app",
+    "css:watch": "tailwindcss -i src-css/site.css -o resources/public/css/site.css --watch",
+    "css:release": "tailwindcss -i src-css/site.css -o resources/public/css/site.css --minify",
+    "assets:release": "npm run cljs:release && npm run css:release",
+    "build": "npm run assets:release && lein uberjar"
   },
   "devDependencies": {
-    "shadow-cljs": "3.4.11"
+    "@tailwindcss/cli": "4.3.2",
+    "shadow-cljs": "3.4.11",
+    "tailwindcss": "4.3.2"
   }
 }

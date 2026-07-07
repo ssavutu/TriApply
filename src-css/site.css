@@ -1,0 +1,46 @@
+@import "tailwindcss" source(none);
+
+@source "../src";
+@source "../src-cljs";
+
+@theme {
+  --font-crimson: "Crimson Text", serif;
+  --font-roboto-slab: "Roboto Slab", serif;
+  --font-playfair: "Playfair Display", serif;
+  --font-libre: "Libre Franklin", sans-serif;
+
+  --color-triangleBlue: #2563eb;
+  --color-triangleGray: #e5e7eb;
+  --color-triangleDark: #1f2937;
+  --color-triangleDanger: #b4041e;
+  --color-triangleSecondary: #0c0a3e;
+}
+
+.triangle-checkbox {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-grid;
+  place-content: center;
+  border: 1px solid #2563eb;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #2563eb;
+}
+
+.triangle-checkbox::before {
+  content: "✓";
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1;
+  transform: scale(0);
+}
+
+.triangle-checkbox:checked::before {
+  transform: scale(1);
+}
+
+.triangle-checkbox:focus {
+  outline: 2px solid rgb(37 99 235 / 35%);
+  outline-offset: 2px;
+}

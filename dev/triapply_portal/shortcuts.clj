@@ -1,20 +1,20 @@
-(ns triapply.shortcuts
-  (:require [triapply.web :as web]))
+(ns triapply-portal.shortcuts
+  (:require [triapply-portal.http-server :as http-server]))
 
 (defn start []
-  (web/start-server))
+  (http-server/start-server))
 
 (defn stop []
-  (web/stop-server))
+  (http-server/stop-server))
 
 (defn restart []
-  (web/restart-server))
+  (http-server/restart-server))
 
 (defn start-alt []
-  (web/start-server 4322))
+  (http-server/start-server 4322))
 
 (defn restart-alt []
-  (web/restart-server 4322))
+  (http-server/restart-server 4322))
 
 (comment
   ;; Put the cursor after a form and run Calva: Evaluate Current Form.
@@ -28,4 +28,4 @@
   (restart-alt)
 
   ;; Quick handler check without a browser.
-  (web/handler nil))
+  (http-server/handler {:request-method :get :uri "/"}))
