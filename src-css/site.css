@@ -16,6 +16,36 @@
   --color-triangleSecondary: #0c0a3e;
 }
 
+/* Native date input, themed to match the Triangle field styling. Keeping the
+   native control preserves keyboard entry, mobile pickers, and accessibility;
+   we only restyle the chrome so it stops looking like a default browser widget. */
+.triangle-date {
+  color-scheme: light;
+  padding-right: 1.75rem;
+}
+
+/* Empty state shows the format hint (mm/dd/yyyy) in the muted placeholder tone;
+   once a date is chosen the JS adds `has-value` and it reverts to full contrast. */
+.triangle-date:not(.has-value)::-webkit-datetime-edit {
+  color: color-mix(in oklab, var(--color-triangleDark) 40%, transparent);
+}
+
+/* Recolor the default black calendar glyph to Triangle blue and give it a
+   larger, hoverable hit target sitting flush at the field's right edge. */
+.triangle-date::-webkit-calendar-picker-indicator {
+  margin: 0;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  filter: brightness(0) invert(27%) sepia(96%) saturate(1780%)
+          hue-rotate(213deg) brightness(97%) contrast(96%);
+}
+
+.triangle-date::-webkit-calendar-picker-indicator:hover {
+  background-color: color-mix(in oklab, var(--color-triangleBlue) 12%, transparent);
+}
+
 .triangle-checkbox {
   appearance: none;
   width: 1.25rem;

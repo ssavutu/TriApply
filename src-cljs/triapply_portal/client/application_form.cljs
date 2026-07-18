@@ -112,6 +112,18 @@
       (set! (.-required detail)
             (and selected? (= "true" (.. detail -dataset -required)))))))
 
+;; Date fields -----------------------------------------------------------------
+;; Track empty vs. filled so the CSS can mute the mm/dd/yyyy format hint, and let
+;; a click anywhere on the field open the native picker (not just the tiny icon).
+(defn- sync-date-value! [^js el]
+  (.toggle (.-classList el) "has-value" (not (str/blank? (.-value el)))))
+
+(defn- init-date-fields! []
+  (doseq [^js el (elements ".triangle-date")]
+    (sync-date-value! el)
+    (.addEventListener el "input" #(sync-date-value! el))
+    (.addEventListener el "change" #(sync-date-value! el))))
+
 (defn init []
   (let [form (.querySelector js/document "form")
         section-boxes (elements ".section-interest")
@@ -154,4 +166,5 @@
       (doseq [field conditional-fields]
         (.addEventListener field "input" update-form!)
         (.addEventListener field "change" update-form!))
+      (init-date-fields!)
       (update-form!))))

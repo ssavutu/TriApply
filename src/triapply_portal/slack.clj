@@ -106,6 +106,19 @@
                []
                lines)))
 
+(def ^:private divider {:type "divider"})
+
+(defn- context-block [text]
+  {:type "context" :elements [{:type "mrkdwn" :text text}]})
+
+(defn- summary-context
+  "A one-line triage header under the title: the applicant's name and, when
+  known, the sections they're interested in — the fields a reviewer scans first."
+  [name cfg sections]
+  (let [sections-line (when-let [[_ v] (sections-pair cfg sections)]
+                        (str "  ·  Interested in: " v))]
+    (context-block (str "*" name "*" sections-line))))
+
 (defn- decision-buttons [value]
   {:type "actions"
    :block_id "decision"
@@ -124,15 +137,21 @@
         button-value (json/write-str {:submissionId submission-id
                                       :name name
                                       :email (get answers "email")})
-        pairs (concat (applicant-pairs cfg answers)
-                      (when-let [p (sections-pair cfg sections)] [p])
-                      (supplemental-pairs cfg supplementals))]
+        main-pairs (concat (applicant-pairs cfg answers)
+                           (when-let [p (sections-pair cfg sections)] [p]))
+        supp-pairs (supplemental-pairs cfg supplementals)]
     {:text (str name " submitted an application")
      :blocks (concat
               [{:type "header"
-                :text {:type "plain_text" :text "New application" :emoji true}}]
-              (pack-sections (map pair->line pairs))
-              [(decision-buttons button-value)])}))
+                :text {:type "plain_text" :text "New application" :emoji true}}
+               (summary-context name cfg sections)
+               divider]
+              (pack-sections (map pair->line main-pairs))
+              (when (seq supp-pairs)
+                (cons divider (pack-sections (map pair->line supp-pairs))))
+              [(decision-buttons button-value)]
+              (when (present? submission-id)
+                [(context-block (str "Submission `" submission-id "`"))]))}))
 
 ;; ---------------------------------------------------------------------------
 ;; Request-signature verification

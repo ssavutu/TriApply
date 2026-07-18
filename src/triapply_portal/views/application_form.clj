@@ -13,6 +13,10 @@
 (def detail-field-class
   "block flex-1 border-0 border-b border-triangleGray bg-transparent px-0 py-1 text-base text-triangleDark placeholder:text-triangleDark/40 focus:border-triangleBlue focus:outline-none focus:ring-0")
 
+;; Native date input, themed to match `field-class`. The `triangle-date` marker
+;; class drives the CSS that recolors the calendar icon and the click-to-open JS.
+(def date-field-class (str field-class " triangle-date cursor-pointer"))
+
 (def card-class
   "max-w-2xl mx-auto bg-white rounded-xl border border-blue-600 p-8 sm:p-10 font-roboto-slab")
 
@@ -73,6 +77,11 @@
                       :accept accept
                       :multiple multiple)]
 
+       :date
+       [:input (assoc attributes
+                      :class (or (:class attributes) date-field-class)
+                      :type "date")]
+
        [:input (assoc attributes
                       :class (or (:class attributes) field-class)
                       :type (name type))]))))
@@ -130,6 +139,16 @@
      :data-conditional-field true
      :data-required (when required? "true")})])
 
+(defn require-any-note
+  "A visible cue for a `require-any` group: the fields are individually optional,
+  but the applicant must complete at least one — so neither field shows an
+  asterisk on its own. Without this the group reads as fully optional."
+  [require-any]
+  (when (seq require-any)
+    [:p {:class "mt-3 text-base font-medium text-triangleDark"}
+     [:span {:class "text-red-600"} "*"]
+     " At least one of the following is required."]))
+
 (defn supplemental-section
   [{:keys [id title content fields triggers require-any require-any-error]}]
   (into
@@ -141,6 +160,7 @@
                       :data-require-any-error require-any-error}]
      title (conj [:h2 {:class card-heading-class} title]))
    (concat (map content-block content)
+           (when-let [note (require-any-note require-any)] [note])
            (map supplemental-field fields))))
 
 (defn application-page

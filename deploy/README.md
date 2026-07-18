@@ -109,12 +109,15 @@ submission to it, and the same script later stamps the decision back onto the
 matching row.
 
 Columns are **header-driven**: it seeds meta columns
-(`submissionId · receivedAt · sections · files · decision · position · decidedAt`)
+(`Submission ID · Received At · Sections · Decision · Position · Decided At`)
 and then gives **each answer/supplemental field its own column**, created the
-first time that field name appears. The layout adapts to the form automatically.
+first time that field name appears. Headers are written as human-readable
+labels (the script keys lookups off the raw field name via `humanize_`), the
+header row is styled and frozen, and columns auto-size to their contents. The
+layout adapts to the form automatically.
 Because headers are dynamic, start from a **fresh/empty tab** — an old tab with
-the previous `answers`/`supplementals` JSON columns will keep those stale columns
-alongside the new per-field ones.
+the previous raw headers (e.g. `submissionId`, or the removed `files` column)
+will keep those stale columns alongside the new labeled ones.
 
 ### First deploy
 1. Open the target Google Sheet → **Extensions → Apps Script**.
