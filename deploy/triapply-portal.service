@@ -1,0 +1,31 @@
+# systemd unit for the TriApply Portal.
+# Install: copy to /etc/systemd/system/triapply-portal.service, then
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now triapply-portal
+# Logs: journalctl -u triapply-portal -f
+
+[Unit]
+Description=TriApply Portal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=triapply
+Group=triapply
+WorkingDirectory=/opt/triapply
+# KEY=VALUE lines — example.env works as-is (comments and blank lines are fine).
+EnvironmentFile=/opt/triapply/portal.env
+ExecStart=/usr/bin/java -jar /opt/triapply/triapply-portal-standalone.jar
+Restart=on-failure
+RestartSec=5
+# Uploads land here; must match TRIAPPLY_UPLOAD_DIR and be writable by this user.
+ReadWritePaths=/var/lib/triapply/uploads
+# Basic hardening.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

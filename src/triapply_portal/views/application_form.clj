@@ -162,6 +162,9 @@
             :method "post"
             :enctype "multipart/form-data"
             :class "font-roboto-slab"}
+     ;; Stable per-render idempotency key: a browser resubmit of this same form
+     ;; carries the same id, so downstream sinks can de-duplicate on retries.
+     [:input {:type "hidden" :name "submission-id" :value (str (random-uuid))}]
      [:section {:class first-card-class}
       [:h2 {:class (str "mt-2 " card-heading-class)} (:title applicant)]
       (into [:div {:class "mt-8 grid gap-x-6 gap-y-7 sm:grid-cols-2"}]

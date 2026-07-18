@@ -6,6 +6,8 @@
                  [ring/ring-core "1.15.2"]
                  [ring/ring-jetty-adapter "1.15.2"]
                  [metosin/reitit-ring "0.9.1"]
+                 [org.clojure/data.json "2.5.1"]
+                 [com.sun.mail/jakarta.mail "2.0.1"]
                  [hiccup "2.0.0-RC4"]]
   :main ^:skip-aot triapply-portal.main
   :target-path "target/%s"

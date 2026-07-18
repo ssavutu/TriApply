@@ -81,3 +81,39 @@
     (let [errors (submission/validate
                   (assoc valid-params "prev-experience" "other"))]
       (is (contains? errors "prev-experience-other")))))
+
+(defn- empty-upload []
+  {:filename "" :content-type "application/octet-stream" :size 0
+   :tempfile (File/createTempFile "empty" ".tmp")})
+
+(defn- real-upload [file]
+  {:filename "port.pdf" :content-type "application/pdf" :size 10 :tempfile file})
+
+(deftest normalized-drops-empty-file-parts
+  (let [file (File/createTempFile "port" ".pdf")]
+    (try
+      (testing "an untouched file input (blank filename, 0 bytes) is dropped, not stored"
+        (let [{:keys [supplementals]}
+              (submission/normalized
+               (assoc valid-params
+                      "section-interest" "photography"
+                      "portfolio-files" (empty-upload)))]
+          (is (not (contains? supplementals "portfolio-files")))))
+
+      (testing "a real upload survives normalization"
+        (let [{:keys [supplementals]}
+              (submission/normalized
+               (assoc valid-params
+                      "section-interest" "photography"
+                      "portfolio-files" (real-upload file)))]
+          (is (= file (get-in supplementals ["portfolio-files" :tempfile])))))
+
+      (testing "empties are filtered out of multi-file vectors"
+        (let [{:keys [supplementals]}
+              (submission/normalized
+               (assoc valid-params
+                      "section-interest" "photography"
+                      "portfolio-files" [(empty-upload) (real-upload file)]))]
+          (is (= [file] (map :tempfile (get supplementals "portfolio-files"))))))
+      (finally
+        (.delete file)))))

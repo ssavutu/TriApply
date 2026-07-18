@@ -9,6 +9,53 @@
   ([root selector]
    (array-seq (.querySelectorAll root selector))))
 
+;; Draft autosave --------------------------------------------------------------
+;; Keeps typed-in progress across accidental refresh/close/navigation by mirroring
+;; the form into localStorage. File inputs can't be restored (browser security)
+;; and the hidden submission-id is per-render, so both are skipped. Cleared on a
+;; successful submission by a small script on the "received" page — the key here
+;; must match the one used there.
+(def ^:private storage-key "triapply-application-v1")
+
+(defn- toggle-control? [^js el]
+  (let [type (.-type el)]
+    (or (= "checkbox" type) (= "radio" type))))
+
+(defn- persistable? [^js el]
+  (let [type (.-type el)]
+    (and (not (contains? #{"hidden" "file" "submit" "button" "reset"} type))
+         (seq (.-name el)))))
+
+(defn- persistable-controls [form]
+  (filter persistable? (elements form "input, textarea, select")))
+
+(defn- control-key [^js el]
+  ;; Checkboxes/radios share a name across values, so key those by name+value;
+  ;; everything else is unique per name.
+  (if (toggle-control? el)
+    (str (.-name el) "::" (.-value el))
+    (.-name el)))
+
+(defn- save-draft! [form]
+  (let [state (reduce (fn [acc ^js el]
+                        (assoc acc (control-key el)
+                               (if (toggle-control? el) (.-checked el) (.-value el))))
+                      {}
+                      (persistable-controls form))]
+    (try
+      (.setItem js/localStorage storage-key (js/JSON.stringify (clj->js state)))
+      (catch :default _ nil))))
+
+(defn- restore-draft! [form]
+  (when-let [raw (try (.getItem js/localStorage storage-key) (catch :default _ nil))]
+    (when-let [state (try (js->clj (js/JSON.parse raw)) (catch :default _ nil))]
+      (doseq [^js el (persistable-controls form)
+              :let [k (control-key el)]
+              :when (contains? state k)]
+        (if (toggle-control? el)
+          (set! (.-checked el) (boolean (get state k)))
+          (set! (.-value el) (get state k)))))))
+
 (defn- selected-values [section-boxes]
   (into #{}
         (comp (filter #(.-checked %))
@@ -66,7 +113,8 @@
             (and selected? (= "true" (.. detail -dataset -required)))))))
 
 (defn init []
-  (let [section-boxes (elements ".section-interest")
+  (let [form (.querySelector js/document "form")
+        section-boxes (elements ".section-interest")
         section-count (.getElementById js/document "section-count")
         supplemental-empty (.querySelector js/document ".supplemental-empty")
         supplemental-sections (elements ".supplemental-section")
@@ -93,6 +141,12 @@
                 (update-option-details! option-details)
                 (update-supplementals!
                  section-boxes supplemental-sections supplemental-empty)))]
+      ;; Repopulate any saved draft before deriving section counts / visibility,
+      ;; so restored checkboxes drive the rest of the UI on load.
+      (when form
+        (restore-draft! form)
+        (.addEventListener form "input" #(save-draft! form))
+        (.addEventListener form "change" #(save-draft! form)))
       (doseq [box section-boxes]
         (.addEventListener box "change" update-form!))
       (doseq [radio option-radios]

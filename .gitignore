@@ -9,3 +9,4 @@ resources/public/css/
 .shadow-cljs/
 node_modules/
 *.un~
+.env

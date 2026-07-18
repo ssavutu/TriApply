@@ -146,11 +146,31 @@
        (validate-sections config params)
        (validate-supplementals config params))))
 
+(defn- upload-map? [v]
+  (and (map? v) (contains? v :tempfile)))
+
+(defn- prune-empty-uploads
+  "Drops empty file parts (a blank filename / zero-byte tempfile that the browser
+  sends for an untouched file input). A single empty upload becomes nil; empties
+  are filtered out of multi-file vectors. Non-upload values pass through."
+  [value]
+  (cond
+    (upload-map? value) (when (rules/present? value) value)
+    (sequential? value) (vec (keep prune-empty-uploads value))
+    :else value))
+
 (defn normalized
   ([params] (normalized config/membership-application params))
   ([config params]
    {:answers (into {}
-                   (map (fn [{:keys [name]}] [name (get params name)]))
+                   (map (fn [{:keys [name]}]
+                          [name (prune-empty-uploads (get params name))]))
                    (config/answer-fields config))
     :sections (rules/values (get params "section-interest"))
-    :supplementals (select-keys params (map :name (config/supplemental-fields config)))}))
+    :supplementals (into {}
+                         (keep (fn [{:keys [name]}]
+                                 (let [v (prune-empty-uploads (get params name))]
+                                   (when-not (or (nil? v)
+                                                 (and (sequential? v) (empty? v)))
+                                     [name v]))))
+                         (config/supplemental-fields config))}))
